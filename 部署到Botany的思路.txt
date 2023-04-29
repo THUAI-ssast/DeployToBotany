@@ -9,6 +9,11 @@ Botany目前的设计：
 可提交一个C语言版 judge，但实际的工作由 Unity StandAlone Player 完成。
 提交完judge后，在`submissions/`里找到指定编号的文件，把供使用的文件放进目录。
 
+将本地文件拷贝到服务器：
+1. 首先确保指定目录存在且可写入
+2. `scp <source> <target>`. 拷贝整个目录就加个 `-r`.
+
+
 由于不知为何总得用PowerShell启动才能正常使用，装一个PowerShell。
 Ubuntu 22.04:
 ```bash
