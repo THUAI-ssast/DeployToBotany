@@ -8,6 +8,9 @@ ssh ssast@ssast.net
 运行过程中，主要用到 compile.sh 与 match.sh 脚本。前者在提交后调用，处理提交的代码文件；后者发起新的比赛。
 
 
+`/srv/botany`是整个Botany项目的目录，`docker-compose.yml`就在这里。
+
+
 评测【judge system文档：https://github.com/ayuusweetfish/botany/blob/29de93cc506de917d232d36e9f0373fc63df90e8/judge/box.md】：
 `/var/botany/submissions`
 向stdout输出的内容会用于后续的赛事逻辑与回放，向stderr输出的内容可用于调试。
