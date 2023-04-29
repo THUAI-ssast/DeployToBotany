@@ -1,0 +1,51 @@
+Botany目前的设计：
+- 选手只能提交一个代码文件，且里面含有entryPoint……
+- 上传代码后，C++ 以 `lib` 目录为库目录，编译。 
+- C++的入口文件即bin可执行文件，Python的入口文件是选手提交的代码文件。
+
+配合Botany的设计要求，把entryPoint放到选手代码文件一起提交。把原main文件改名为controller，原main函数改为run_ai(init: callable, get_action: callable)，在选手代码文件的末尾添几行来调用这个函数。
+然后还得tmd把SDK文件夹的名字也注意不能重复。好在C++文件和Python文件放在一起也没关系，不需要强制写成 THUAI6py 之类的；由于选手包之前已经发了，为了少做修改就将就混在一起吧。
+
+可提交一个C语言版 judge，但实际的工作由 Unity StandAlone Player 完成。
+提交完judge后，在`submissions/`里找到指定编号的文件，把供使用的文件放进目录。
+
+由于不知为何总得用PowerShell启动才能正常使用，装一个PowerShell。
+Ubuntu 22.04:
+```bash
+# 添加PowerShell软件源
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
+# 更新软件包列表
+sudo apt update
+# 安装PowerShell
+sudo apt install -y powershell
+```
+pwsh的启动指令为（用法和PowerShell不太一样）：
+"pwsh -Command <command>"
+<command>部分即是在pwsh怎么执行就怎么写，注意转义即可——C语言字符串转义完后还要留下`\`供启动 pwsh 时转义，层层转义颇容易搞错。
+
+---
+
+后端BUG：
+
+match.sh里检测的末尾是`3.py`，但实际上 `python3`代码会被命名为末尾是 `py3`，根本对不上。
+
+ssast@ssast:/var/botany$ ./compile.sh 31 "gcc.c"
+Compiling 31
+./compile.sh: 9: [[: not found
+./compile.sh: 11: [[: not found
+这是bash语法，然而用在了使用sh执行的程序里。会导致执行失败。故改成：
+```
+if [ "$LANG" = "gcc.c" ]; then
+    gcc $CODE -O2 -I/var/botany/lib /var/botany/lib/bot.c -o $BIN 2>&1
+elif [ "$LANG" = "gcc.cpp" ]; then
+    g++ $CODE -O2 -I/var/botany/lib -x c /var/botany/lib/bot.c -o $BIN 2>&1
+fi
+```
+
+---
+
+前端 UI BUG（好在不影响逻辑）：
+
+- 提交1个裁判会显示2个
+- 即使 设为裁判 了也会显示“未选定本赛事的裁判代码”

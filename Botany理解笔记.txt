@@ -1,0 +1,35 @@
+[Botany部署文档](https://apache-iotdb.feishu.cn/docx/Qo9VdhkA7oGMhNxAGxNcR0yUneD
+
+ssh ssast@ssast.net
+使用 `tmux a` 查看botany 运行情况。<c-b>d退出。
+`docker ps` 查看所有正在运行的容器，botany的就在其中。
+
+
+运行过程中，主要用到 compile.sh 与 match.sh 脚本。前者在提交后调用，处理提交的代码文件；后者发起新的比赛。
+
+
+评测【judge system文档：https://github.com/ayuusweetfish/botany/blob/29de93cc506de917d232d36e9f0373fc63df90e8/judge/box.md】：
+`/var/botany/submissions`
+向stdout输出的内容会用于后续的赛事逻辑与回放，向stderr输出的内容可用于调试。
+
+库目录为`lib/`目录。不同赛事的库是放在一起的，这挺逆天的、强制SDK目录命名要各不相同，不过忍忍吧。
+
+管理员提交judge像参赛选手提交AI，后端会一视同仁地编译，然后管理员再将其设为judge。
+通过命令行参数接收启动AI要执行的命令和所需的日志输出。
+它创建子进程，将其stderr重定向到日志文件，与其交互，并将report写入stdout。它自己的stderr用于记录judge的活动并报告内部错误。
+对于在系统中以“系统错误”状态报告的错误，judge返回非零状态。
+
+
+赛事脚本【文档：https://github.com/ayuusweetfish/botany/blob/29de93cc506de917d232d36e9f0373fc63df90e8/app/script.md】：
+on_timer定时调用，on_manual管理员手动调用。计时的单位为秒。
+update_stats在评测完成后被调用，report即评测时向stdout输出的内容，par是participants列表。
+选手的rating是得分；performance是表现详情，会在选手排名的详情列展示。
+
+
+回放：
+`/srv/botany/frontend`
+回放模板即查看单局比赛详情时插入的主体内容。report和前面的report是同一个东西。
+
+在 /frontend/dist 放置 webgl构建结果。
+在回放模板里通过<iframe src="... index.html" onload=..></iframe>使用。
+在<script>里写一个onload用的函数，用于调用 iframe 里的函数，传递 `<% report js str %>` 让 Unity 开始回放。
