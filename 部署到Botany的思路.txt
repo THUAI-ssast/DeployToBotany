@@ -29,24 +29,23 @@ pwsh的启动指令为（用法和PowerShell不太一样）：
 "pwsh -Command <command>"
 <command>部分即是在pwsh怎么执行就怎么写，注意转义即可——C语言字符串转义完后还要留下`\`供启动 pwsh 时转义，层层转义颇容易搞错。
 
+
+
 ---
 
 后端BUG：
 
 match.sh里检测的末尾是`3.py`，但实际上 `python3`代码会被命名为末尾是 `py3`，根本对不上。
 
+argv+=("\"isolate --run -b $i --dir=box=/var/botany/submissions/$s --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc= $env --silent -- $exec\"")
+加上一对引号供后续使用。
+
+
 ssast@ssast:/var/botany$ ./compile.sh 31 "gcc.c"
 Compiling 31
 ./compile.sh: 9: [[: not found
 ./compile.sh: 11: [[: not found
-这是bash语法，然而用在了使用sh执行的程序里。会导致执行失败。故改成：
-```
-if [ "$LANG" = "gcc.c" ]; then
-    gcc $CODE -O2 -I/var/botany/lib /var/botany/lib/bot.c -o $BIN 2>&1
-elif [ "$LANG" = "gcc.cpp" ]; then
-    g++ $CODE -O2 -I/var/botany/lib -x c /var/botany/lib/bot.c -o $BIN 2>&1
-fi
-```
+这是bash语法，然而用在了使用sh执行的程序里。会导致执行失败。故把 sh 改成 bash。
 
 ---
 
