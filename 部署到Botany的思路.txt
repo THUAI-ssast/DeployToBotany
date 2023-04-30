@@ -29,7 +29,8 @@ pwsh的启动指令为（用法和PowerShell不太一样）：
 "pwsh -Command <command>"
 <command>部分即是在pwsh怎么执行就怎么写，注意转义即可——C语言字符串转义完后还要留下`\`供启动 pwsh 时转义，层层转义颇容易搞错。
 
-
+JavaScript调用Unity：
+https://docs.unity3d.com/cn/2021.3/Manual/webgl-interactingwithbrowserscripting.html
 
 ---
 
