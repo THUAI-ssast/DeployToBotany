@@ -25,9 +25,8 @@ int main(int argc, char *argv[]) {
     // Start the game with 2 teams of AI
     char *command1 = argv[1];
     char *command2 = argv[2];
-    char *command = (char *)malloc(1024);
     char *pwsh_command = (char *)malloc(1024);
-    sprintf(pwsh_command, "pwsh -Command \"%s \\\"%s\\\" \\\"%s\\\"\"", "./THUAI6.x86_64", command1, command2);
+    sprintf(pwsh_command, "pwsh -Command \"./THUAI6.x86_64 \\\"%s\\\" \\\"%s\\\" -batchmode\"", command1, command2);
 #if DEBUG
     fprintf(stderr, "pwsh_command = %s\n", pwsh_command);
     fflush(stderr);
