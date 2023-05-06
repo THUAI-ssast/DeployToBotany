@@ -1,7 +1,9 @@
 #include <errno.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define DEBUG 0
 
@@ -22,7 +24,19 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < argc; i++) fprintf(stderr, "argv[%d] = %s\n", i, argv[i]);
     fflush(stderr);
 #endif
-    // Start the game with 2 teams of AI
+
+    // Set the working directory to the program directory
+    char *prog_dir = dirname(argv[0]);
+    if (chdir(prog_dir) != 0) {
+        fprintf(stderr, "Error: Failed to change working directory to %s\n", prog_dir);
+        exit(1);
+    }
+#if DEBUG
+    fprintf(stderr, "Current working directory: %s\n", prog_dir);
+    fflush(stderr);
+#endif
+
+    // Generate the command to run the game. Start the game with 2 teams of AI
     char *command1 = argv[1];
     char *command2 = argv[2];
     char *pwsh_command = (char *)malloc(1024);
