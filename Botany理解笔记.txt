@@ -1,8 +1,7 @@
 [Botany部署文档](https://apache-iotdb.feishu.cn/docx/Qo9VdhkA7oGMhNxAGxNcR0yUneD
 
 ssh ssast@ssast.net
-使用 `tmux a` 查看botany 运行情况。<c-b>d退出。
-`docker ps` 查看所有正在运行的容器，botany的就在其中。
+`docker ps` 查看所有正在运行的容器，botany的就在其中。可进入容器、可查看容器日志。
 
 
 运行过程中，主要用到 compile.sh 与 match.sh 脚本。前者在提交后调用，处理提交的代码文件；后者发起新的比赛。
@@ -16,6 +15,11 @@ ssh ssast@ssast.net
 向stdout输出的内容会用于后续的赛事逻辑与回放，向stderr输出的内容可用于调试。
 
 库目录为`lib/`目录。不同赛事的库是放在一起的，这挺逆天的、强制SDK目录命名要各不相同，不过忍忍吧。
+
+Botany目前的设计：
+- 选手只能提交一个代码文件，且里面含有entryPoint
+- 上传代码后，C++ 以 `lib` 目录为库目录，编译。 
+- C++的入口文件即bin可执行文件，Python的入口文件是选手提交的代码文件。
 
 管理员提交judge像参赛选手提交AI，后端会一视同仁地编译，然后管理员再将其设为judge。
 通过命令行参数接收启动AI要执行的命令和所需的日志输出。

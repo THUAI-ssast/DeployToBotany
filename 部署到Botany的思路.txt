@@ -1,13 +1,12 @@
-Botany目前的设计：
-- 选手只能提交一个代码文件，且里面含有entryPoint……
-- 上传代码后，C++ 以 `lib` 目录为库目录，编译。 
-- C++的入口文件即bin可执行文件，Python的入口文件是选手提交的代码文件。
-
 配合Botany的设计要求，把entryPoint放到选手代码文件一起提交。把原main文件改名为controller，原main函数改为run_ai(init: callable, get_action: callable)，在选手代码文件的末尾添几行来调用这个函数。
-然后还得tmd把SDK文件夹的名字也注意不能重复。好在C++文件和Python文件放在一起也没关系，不需要强制写成 THUAI6py 之类的；由于选手包之前已经发了，为了少做修改就将就混在一起吧。
+然后把库文件放到`/lib`目录。还得tmd注意彼此不能命名冲突。好在C++文件和Python文件放在一起也没关系，不需要强制写成 THUAI6py 之类的；由于选手包之前已经发了，为了少做修改就将就混在一起吧。
 
-可提交一个C语言版 judge，但实际的工作由 Unity StandAlone Player 完成。
+提交一个C语言版 judge，但实际的工作由 Unity StandAlone Player 完成。
 提交完judge后，在`submissions/`里找到指定编号的文件，把供使用的文件放进目录。
+
+记得设置可执行程序的权限。
+
+---
 
 将本地文件拷贝到服务器：
 1. 首先确保指定目录存在且可写入
@@ -38,15 +37,12 @@ https://docs.unity3d.com/cn/2021.3/Manual/webgl-interactingwithbrowserscripting.
 
 match.sh里检测的末尾是`3.py`，但实际上 `python3`代码会被命名为末尾是 `py3`，根本对不上。
 
-argv+=("\"isolate --run -b $i --dir=box=/var/botany/submissions/$s --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc= $env --silent -- $exec\"")
-加上一对引号供后续使用。
-
-
-ssast@ssast:/var/botany$ ./compile.sh 31 "gcc.c"
+./compile.sh 31 "gcc.c"
 Compiling 31
 ./compile.sh: 9: [[: not found
 ./compile.sh: 11: [[: not found
 这是bash语法，然而用在了使用sh执行的程序里。会导致执行失败。故把 sh 改成 bash。
+（不过，也可能是在容器里把 sh 指向了 bash；但改成 bash 也没什么坏处）
 
 ---
 
