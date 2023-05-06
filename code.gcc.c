@@ -32,9 +32,19 @@ int main(int argc, char *argv[]) {
     fflush(stderr);
 #endif
 
-    system("rm -f record.json");
+    // Delete the old record.json
+    int rm_exit_status = system("rm -f record.json");
+    if (rm_exit_status != 0) {
+        fprintf(stderr, "Error: Failed to delete record.json\n");
+        exit(1);
+    }
 
-    system(pwsh_command);
+    // Run the game
+    int pwsh_exit_status = system(pwsh_command);
+    if (pwsh_exit_status != 0) {
+        fprintf(stderr, "Error: Failed to run THUAI6.x86_64\n");
+        exit(1);
+    }
 
     // It'll generate a JSON file named record.json
 
