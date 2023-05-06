@@ -1,0 +1,35 @@
+<html>
+
+<body>
+    <p>Report:</p>
+    <pre id="result"></pre>
+    <button id="download">Download</button>
+    <!-- <iframe id="frame"></iframe> -->
+    <script>
+        // 提取真正的 report
+        let report = <% report js str %>;
+        report = report.substring(report.indexOf("{"));
+
+        // 截取第1个"["到第1个"]"之间（左闭右闭）的内容作为 result
+        let result = report.substring(report.indexOf("["), report.indexOf("]") + 1);
+        document.getElementById("result").innerHTML = "result: " + result;
+        // 生成下载链接
+        const button = document.getElementById('download');
+        button.addEventListener('click', () => {
+            const blob = new Blob([report], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'record.json';
+            link.click();
+        });
+
+        // 播放器
+        // WEBGL 不支持在 Unity 里使用 dynamic 关键字. 故暂时就不做了，改起来太麻烦了
+        // 见 CHatGPT - Unity WebGL JavaScript 交互. https://chat.openai.com/c/917b86d5-19b1-490b-8bcb-ac751d79c69f
+        // Unity文档：https://docs.unity3d.com/cn/2023.2/Manual/webgl-interactingwithbrowserscripting.html
+        // MyGameInstance.SendMessage('MyGameObject', 'MyFunction', 'MyString');
+    </script>
+</body>
+
+</html>
