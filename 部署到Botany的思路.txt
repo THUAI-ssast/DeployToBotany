@@ -12,21 +12,37 @@
 1. 首先确保指定目录存在且可写入
 2. `scp <source> <target>`. 拷贝整个目录就加个 `-r`.
 
+---
 
-由于不知为何总得用PowerShell启动才能正常使用，装一个PowerShell。
-Ubuntu 22.04:
-```bash
-# 添加PowerShell软件源
-curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
-# 更新软件包列表
-sudo apt update
-# 安装PowerShell
-sudo apt install -y powershell
-```
+链接库问题。可使用 `ldd` 命令查看可执行文件的依赖库。
+
+Alpine Linux 不兼容 glibc 且尝试后发现简直没法解决，故改用 Ubuntu 作为基础镜像。
+
+---
+
+后端调试：
+
 pwsh的启动指令为（用法和PowerShell不太一样）：
-"pwsh -Command <command>"
-<command>部分即是在pwsh怎么执行就怎么写，注意转义即可——C语言字符串转义完后还要留下`\`供启动 pwsh 时转义，层层转义颇容易搞错。
+`pwsh -Command "<command>"`
+<command>部分即是在pwsh怎么执行就怎么写，注意引号和转义即可。调用跨了几层，转义起来比较麻烦。
+
+`pwsh -Command "./THUAI6.x86_64 \"%s\" \"%s\" -batchmode"`
+
+测试顺序：
+
+```
+isolate --run -b 0 --dir=box=/var/botany/submissions/78 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin
+isolate --run -b 1 --dir=box=/var/botany/submissions/78 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin
+
+pwsh -Command "./THUAI6.x86_64 \"/var/botany/submissions/78/bin\" \"/var/botany/submissions/78/bin\" -batchmode"
+
+pwsh -Command "./THUAI6.x86_64 \"isolate --run -b 0 --dir=box=/var/botany/submissions/78 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin\" \"isolate --run -b 1 --dir=box=/var/botany/submissions/78 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin\" -batchmode"
+
+./match.sh 257 77 78 78
+
+./match.sh 257 77 78 79
+```
+---
 
 JavaScript调用Unity：
 https://docs.unity3d.com/cn/2021.3/Manual/webgl-interactingwithbrowserscripting.html
