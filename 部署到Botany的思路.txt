@@ -4,7 +4,7 @@
 提交一个C语言版 judge，但实际的工作由 Unity StandAlone Player 完成。
 提交完judge后，在`submissions/`里找到指定编号的文件，把供使用的文件放进目录。
 
-记得设置可执行程序的权限。
+注意权限问题，如运行程序、写入文件等。
 
 ---
 
@@ -30,18 +30,34 @@ pwsh的启动指令为（用法和PowerShell不太一样）：
 
 测试顺序：
 
+```bash
+pwsh -Command "./THUAI6.x86_64 \"/var/botany/submissions/92/bin\" \"/var/botany/submissions/92/bin\" -batchmode"
+
+isolate --run -b 0 --dir=box=/var/botany/submissions/92 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin
+isolate --run -b 1 --dir=box=/var/botany/submissions/92 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin
+isolate --run -b 1 --dir=box=/var/botany/submissions/99 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc= --env=PYTHONPATH=/botlib --silent -- /usr/bin/python3 code.py3
+
+pwsh -Command "./THUAI6.x86_64 \"isolate --run -b 0 --dir=box=/var/botany/submissions/92 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin\" \"isolate --run -b 1 --dir=box=/var/botany/submissions/92 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin\" -batchmode"
+
+# C++ vs C++
+./match.sh 257 77 92 92
+# C++ vs Python
+./match.sh 257 77 92 99
+# Python vs Python
+./match.sh 257 77 99 99
 ```
-isolate --run -b 0 --dir=box=/var/botany/submissions/78 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin
-isolate --run -b 1 --dir=box=/var/botany/submissions/78 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin
 
-pwsh -Command "./THUAI6.x86_64 \"/var/botany/submissions/78/bin\" \"/var/botany/submissions/78/bin\" -batchmode"
+要手动给 `isolate` 的各个沙箱创建 box 目录（`isolate --init`生成得不全？）。我还顺手 chmod 了一下给予写权限，不知道有没有必要。
+相关目录：`/var/local/lib/isolate/`.
 
-pwsh -Command "./THUAI6.x86_64 \"isolate --run -b 0 --dir=box=/var/botany/submissions/78 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin\" \"isolate --run -b 1 --dir=box=/var/botany/submissions/78 --dir=botlib=/var/botany/lib --dir=tmp= --dir=proc=  --silent -- bin\" -batchmode"
+---
 
-./match.sh 257 77 78 78
+获取 report：
 
-./match.sh 257 77 78 79
-```
+不知为何，Unity Player 的输出总会被平台获取、插到了真正的 report 之前，即使重定向到 `/dev/null` 都没用。
+
+于是只好在 Lua 里再把真正的 report 从 Unity Player 提取出来。
+
 ---
 
 JavaScript调用Unity：
