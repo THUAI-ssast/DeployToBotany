@@ -64,14 +64,12 @@ function update_stats(report, par)
     local score_a = tonumber(report:sub(start_idx + 1, comma_idx - 1)) -- 取出 A 队分数
     local score_b = tonumber(report:sub(comma_idx + 1, end_idx - 1)) -- 取出 B 队分数
 
-    -- 胜+2，平+1，败+0
+    -- 胜+1，平+0，败-1
     if score_a > score_b then
-        par[1].rating = par[1].rating + 2
+        par[1].rating = par[1].rating + 1
+        par[2].rating = par[2].rating - 1
     elseif score_a < score_b then
-        par[2].rating = par[2].rating + 2
-    else
-        for i = 1, #par do
-            par[i].rating = par[i].rating + 1
-        end
+        par[1].rating = par[1].rating - 1
+        par[2].rating = par[2].rating + 1
     end
 end
