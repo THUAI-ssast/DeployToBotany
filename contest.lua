@@ -23,9 +23,9 @@ function on_timer(all)
     print('Creating matches for contest #3')
     print('Number of participants with delegates ' .. tostring(#all))
 
-    -- 先跑一圈自己和自己比赛，曲线救国清空rating
+    -- 先跑一圈自己和自己比赛，曲线救国清空rating与performance
     for i = 1, #all do
-        if all[i].rating ~= 0 then
+        if all[i].performance ~= "Win: 0, Draw: 0, Lose: 0" then
             create_match(all[i].id, all[i].id) 
         end
     end
@@ -47,6 +47,8 @@ function update_stats(report, par)
     if par[1].id == par[2].id then
         par[1].rating = 0
         par[2].rating = 0
+        par[1].performance = "Win: 0, Draw: 0, Lose: 0"
+        par[2].performance = "Win: 0, Draw: 0, Lose: 0"
         return
     end
 
@@ -64,12 +66,31 @@ function update_stats(report, par)
     local score_a = tonumber(report:sub(start_idx + 1, comma_idx - 1)) -- 取出 A 队分数
     local score_b = tonumber(report:sub(comma_idx + 1, end_idx - 1)) -- 取出 B 队分数
 
+    -- 从performance中取出胜平负的次数
+    local win_1 = tonumber(par[1].performance:match("Win: (%d+)"))
+    local win_2 = tonumber(par[2].performance:match("Win: (%d+)"))
+    local draw_1 = tonumber(par[1].performance:match("Draw: (%d+)"))
+    local draw_2 = tonumber(par[2].performance:match("Draw: (%d+)"))
+    local lose_1 = tonumber(par[1].performance:match("Lose: (%d+)"))
+    local lose_2 = tonumber(par[2].performance:match("Lose: (%d+)"))
+
     -- 胜+1，平+0，败-1
     if score_a > score_b then
         par[1].rating = par[1].rating + 1
+        win_1 = win_1 + 1
         par[2].rating = par[2].rating - 1
+        lose_2 = lose_2 + 1
     elseif score_a < score_b then
         par[1].rating = par[1].rating - 1
+        lose_1 = lose_1 + 1
         par[2].rating = par[2].rating + 1
+        win_2 = win_2 + 1
+    else
+        draw_1 = draw_1 + 1
+        draw_2 = draw_2 + 1
     end
+
+    -- 更新performance
+    par[1].performance = "Win: " .. tostring(win_1) .. ", Draw: " .. tostring(draw_1) .. ", Lose: " .. tostring(lose_1)
+    par[2].performance = "Win: " .. tostring(win_2) .. ", Draw: " .. tostring(draw_2) .. ", Lose: " .. tostring(lose_2)
 end
